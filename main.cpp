@@ -56,14 +56,18 @@ Purpose:  This project will show you the difference between member functions and
 #include <string>
 struct T
 {
-    T(<#type name#> v, const char* <#variable name#>)   //1
-    //2
-    //3
+    T(int* v, const char* newChar)   //1
+    {
+        value = *v;
+        name = *newChar;
+    }
+    int value;          //2
+    std::string name;   //3
 };
 
-struct <#structName1#>                                //4
+struct CompareClass                                //4
 {
-    <#type name#> compare(<#type name#> a, <#type name#> b) //5
+    T* compare(T* a, T* b) //5
     {
         if( a->value < b->value ) return a;
         if( a->value > b->value ) return b;
@@ -73,29 +77,39 @@ struct <#structName1#>                                //4
 
 struct U
 {
-    float <#name1#> { 0 }, <#name2#> { 0 };
-    <#returnType#> <#memberFunction#>(<#type name#>* <#updatedValue#>)      //12
+    float floatVal1 { 0 }, floatVal2 { 0 };
+    float memberFuncDecreaseDistance(float* updatedFloatPtr)      //12
     {
-        
+        if(updatedFloatPtr != nullptr)
+            floatVal1 = *updatedFloatPtr;
+        while( std::abs(floatVal2 - floatVal1) > 0.001f )
+        {
+            /*
+             write something that makes the distance between that->floatVal2 and that->floatVal1 get smaller
+             */
+            floatVal2 -= 0.01f;
+        }
+        return floatVal1 * floatVal2;
     }
 };
 
-struct <#structname2#>
+struct drawTogether
 {
-    static <#returntype#> <#staticFunctionA#>(U* that, <#type name#>* <#updatedValue#> )        //10
+    static float decreaseDistance(U* that, float* updatedFloatPtr )        //10
     {
-        std::cout << "U's <#name1#> value: " << that-><#name1#> << std::endl;
-        that-><#name1#> = <#updatedValue#>;
-        std::cout << "U's <#name1#> updated value: " << that-><#name1#> << std::endl;
-        while( std::abs(that-><#name2#> - that-><#name1#>) > 0.001f )
+        std::cout << "U's floatVal1 value: " << that->floatVal1 << std::endl;
+        if(updatedFloatPtr != nullptr)
+            that->floatVal1 = *updatedFloatPtr;
+        std::cout << "U's floatVal1 updated value: " << that->floatVal1 << std::endl;
+        while( std::abs(that->floatVal2 - that->floatVal1) > 0.001f )
         {
             /*
-             write something that makes the distance between that-><#name2#> and that-><#name1#> get smaller
+             write something that makes the distance between that->floatVal2 and that->floatVal1 get smaller
              */
-            that-><#name2#> += ;
+            that->floatVal2 -= 0.01f;
         }
-        std::cout << "U's <#name2#> updated value: " << that-><#name2#> << std::endl;
-        return that-><#name2#> * that-><#name1#>;
+        std::cout << "U's floatVal2 updated value: " << that->floatVal2 << std::endl;
+        return that->floatVal2 * that->floatVal1;
     }
 };
         
@@ -115,17 +129,26 @@ struct <#structname2#>
 
 int main()
 {
-    T <#name1#>( , );                                             //6
-    T <#name2#>( , );                                             //6
+    char a = 'a';
+    char b = 'b';
+
+    int one = 2;
+    int two = 1;
+
+    T t1(&one , &a);                                             //6
+    T t2(&two , &b);                                             //6
+
+    CompareClass f;                                            //7
+    auto* smaller = f.compare( &t1, &t2);                              //8
+
+    if(smaller != nullptr)
+        std::cout << "the smaller one is << " << smaller->name << std::endl; //9
     
-    <#structName1#> f;                                            //7
-    auto* smaller = f.compare( , );                              //8
-    std::cout << "the smaller one is << " << smaller->name << std::endl; //9
-    
-    U <#name3#>;
+    U u3{2.0f, 5.2f};
     float updatedValue = 5.f;
-    std::cout << "[static func] <#name3#>'s multiplied values: " << <#structname2#>::<#staticFunctionA#>( , ) << std::endl;                  //11
+    std::cout << "decreaseDistance u3's multiplied values: " << std::endl << drawTogether::decreaseDistance( &u3, &updatedValue) << std::endl;                  //11
     
-    U <#name4#>;
-    std::cout << "[member func] <#name4#>'s multiplied values: " << <#name4#>.<#memberFunction#>( &updatedValue ) << std::endl;
+    U u4{2.0f, 5.2f};
+
+    std::cout << "memberFuncDecreaseDistance u4's multiplied values: " << std::endl << u4.memberFuncDecreaseDistance( &updatedValue ) << std::endl;
 }
