@@ -86,8 +86,10 @@ struct U
     float floatVal1 { 0 }, floatVal2 { 0 };
     float memberFuncDecreaseDistance(float* updatedFloatPtr)      //12
     {
+        std::cout << "U's floatVal1 value: " << floatVal1 << std::endl;
         if(updatedFloatPtr != nullptr)
             floatVal1 = *updatedFloatPtr;
+        std::cout << "U's floatVal1 updated value: " << floatVal1 << std::endl;
         while( std::abs(floatVal2 - floatVal1) > 0.001f )
         {
             /*
@@ -95,6 +97,7 @@ struct U
              */
             floatVal2 -= 0.01f;
         }
+        std::cout << "U's floatVal2 updated value: " << floatVal2 << std::endl;
         return floatVal1 * floatVal2;
     }
 };
