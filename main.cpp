@@ -56,21 +56,27 @@ Purpose:  This project will show you the difference between member functions and
 #include <string>
 struct T
 {
-    T(int* v, const char* newChar)   //1
-    {
-        value = *v;
-        name = *newChar;
-    }
+    
+    
+    T(int* v, const char* newChar)  :  //1
+    value(*v),
+    name{*newChar}
+    {}
+
     int value;          //2
     std::string name;   //3
+    
 };
 
 struct CompareClass                                //4
 {
     T* compare(T* a, T* b) //5
     {
-        if( a->value < b->value ) return a;
-        if( a->value > b->value ) return b;
+        if(a != nullptr && b != nullptr)
+        {
+            if( a->value < b->value ) return a;
+            if( a->value > b->value ) return b;
+        }
         return nullptr;
     }
 };
@@ -97,19 +103,23 @@ struct drawTogether
 {
     static float decreaseDistance(U* that, float* updatedFloatPtr )        //10
     {
-        std::cout << "U's floatVal1 value: " << that->floatVal1 << std::endl;
-        if(updatedFloatPtr != nullptr)
-            that->floatVal1 = *updatedFloatPtr;
-        std::cout << "U's floatVal1 updated value: " << that->floatVal1 << std::endl;
-        while( std::abs(that->floatVal2 - that->floatVal1) > 0.001f )
+        if(that != nullptr)
         {
-            /*
-             write something that makes the distance between that->floatVal2 and that->floatVal1 get smaller
-             */
-            that->floatVal2 -= 0.01f;
+            std::cout << "U's floatVal1 value: " << that->floatVal1 << std::endl;
+            if(updatedFloatPtr != nullptr)
+                that->floatVal1 = *updatedFloatPtr;
+            std::cout << "U's floatVal1 updated value: " << that->floatVal1 << std::endl;
+            while( std::abs(that->floatVal2 - that->floatVal1) > 0.001f )
+            {
+                /*
+                write something that makes the distance between that->floatVal2 and that->floatVal1 get smaller
+                */
+                that->floatVal2 -= 0.01f;
+            }
+            std::cout << "U's floatVal2 updated value: " << that->floatVal2 << std::endl;
+            return that->floatVal2 * that->floatVal1;
         }
-        std::cout << "U's floatVal2 updated value: " << that->floatVal2 << std::endl;
-        return that->floatVal2 * that->floatVal1;
+        return 0;
     }
 };
         
