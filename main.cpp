@@ -31,8 +31,8 @@ struct T
 {
     
     
-    T(int* v, const char* newChar)  :  //1
-    value(*v),
+    T(int& v, const char* newChar)  :  //1
+    value(v),
     name{*newChar}
     {}
 
@@ -43,13 +43,11 @@ struct T
 
 struct CompareClass                                //4
 {
-    T* compare(T* a, T* b) //5
+    T* compare(T& a, T& b) //5
     {
-        if(a != nullptr && b != nullptr)
-        {
-            if( a->value < b->value ) return a;
-            if( a->value > b->value ) return b;
-        }
+        if( a.value < b.value ) return &a;
+        if( a.value > b.value ) return &b;
+        
         return nullptr;
     }
 };
@@ -57,11 +55,10 @@ struct CompareClass                                //4
 struct U
 {
     float floatVal1 { 0 }, floatVal2 { 0 };
-    float memberFuncDecreaseDistance(float* updatedFloatPtr) FIXME: call this 'decreaseDistance', not 'memberFuncDecreaseDistance'
+    float decreaseDistance(float& updatedFloatPtr) 
     {
         std::cout << "U's floatVal1 value: " << floatVal1 << std::endl;
-        if(updatedFloatPtr != nullptr)
-            floatVal1 = *updatedFloatPtr;
+        floatVal1 = updatedFloatPtr;
         std::cout << "U's floatVal1 updated value: " << floatVal1 << std::endl;
         while( std::abs(floatVal2 - floatVal1) > 0.001f )
         {
@@ -75,27 +72,24 @@ struct U
     }
 };
 
-struct drawTogether FIXME: Type names begin with a capitalized letter
+struct DrawTogether 
 {
-    static float decreaseDistance(U* that, float* updatedFloatPtr )        //10
+    static float decreaseDistance(U& that, float& updatedFloat )        //10
     {
-        if(that != nullptr)
+        
+        std::cout << "U's floatVal1 value: " << that.floatVal1 << std::endl;
+        that.floatVal1 = updatedFloat;
+        std::cout << "U's floatVal1 updated value: " << that.floatVal1 << std::endl;
+        while( std::abs(that.floatVal2 - that.floatVal1) > 0.001f )
         {
-            std::cout << "U's floatVal1 value: " << that->floatVal1 << std::endl;
-            if(updatedFloatPtr != nullptr)
-                that->floatVal1 = *updatedFloatPtr;
-            std::cout << "U's floatVal1 updated value: " << that->floatVal1 << std::endl;
-            while( std::abs(that->floatVal2 - that->floatVal1) > 0.001f )
-            {
-                /*
-                write something that makes the distance between that->floatVal2 and that->floatVal1 get smaller
-                */
-                that->floatVal2 -= 0.01f;
-            }
-            std::cout << "U's floatVal2 updated value: " << that->floatVal2 << std::endl;
-            return that->floatVal2 * that->floatVal1;
+            /*
+            write something that makes the distance between that->floatVal2 and that->floatVal1 get smaller
+            */
+            that.floatVal2 -= 0.01f;
         }
-        return 0;
+        std::cout << "U's floatVal2 updated value: " << that.floatVal2 << std::endl;
+        return that.floatVal2 * that.floatVal1;
+        
     }
 };
         
@@ -115,26 +109,29 @@ struct drawTogether FIXME: Type names begin with a capitalized letter
 
 int main()
 {
-    char a = 'a';
-    char b = 'b';
+    char a = 'a'; 
+    char b = 'b'; 
+    
+    int one = 1;
+    int two = 2;
 
-    int one = 2;
-    int two = 1;
+    T t1(one , &a);                                          //6
+    T t2(two , &b);                                          //6 
 
-    T t1(&one , &a);                                             //6
-    T t2(&two , &b);                                             //6
-
-    CompareClass f;                                            //7
-    auto* smaller = f.compare( &t1, &t2);                              //8
+    CompareClass f;                                          //7
+    auto* smaller = f.compare( t1, t2);                      //8
 
     if(smaller != nullptr)
-        std::cout << "the smaller one is << " << smaller->name << std::endl; //9
-    
+        std::cout << "the smaller one is << " << smaller->name << std::endl;     //9
+    else
+        std::cout << t1.name << " and " << t2.name << " are equal" << std::endl; //9
+
     U u3{2.0f, 5.2f};
     float updatedValue = 5.f;
-    std::cout << "decreaseDistance u3's multiplied values: " << std::endl << drawTogether::decreaseDistance( &u3, &updatedValue) << std::endl;                  //11
+
+    std::cout << "decreaseDistance u3's multiplied values: " << std::endl << DrawTogether::decreaseDistance(u3, updatedValue) << std::endl;               //11
     
     U u4{2.0f, 5.2f};
 
-    std::cout << "memberFuncDecreaseDistance u4's multiplied values: " << std::endl << u4.memberFuncDecreaseDistance( &updatedValue ) << std::endl;
+    std::cout << "decreaseDistance u4's multiplied values: " << std::endl << u4.decreaseDistance(updatedValue) << std::endl;
 }
